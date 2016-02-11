@@ -3,3 +3,7 @@ domains.txt
 config.sh
 certs/*
 .acme-challenges/*
+.bundle/
+.ruby-version
+Gemfile.lock
+vendor/
