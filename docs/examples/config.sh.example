@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ########################################################
 # This is the main config file for letsencrypt.sh      #
@@ -34,7 +34,10 @@
 #WELLKNOWN="${BASEDIR}/.acme-challenges"
 
 # Location of private account key (default: $BASEDIR/private_key.pem)
-#PRIVATE_KEY="${BASEDIR}/private_key.pem"
+#ACCOUNT_KEY="${BASEDIR}/private_key.pem"
+
+# Location of private account registration information (default: $BASEDIR/private_key.json)
+#ACCOUNT_KEY_JSON="${BASEDIR}/private_key.json"
 
 # Default keysize for private keys (default: 4096)
 #KEYSIZE="4096"
@@ -59,9 +62,6 @@
 
 # Minimum days before expiration to automatically renew certificate (default: 30)
 #RENEW_DAYS="30"
-
-# Regenerate private keys instead of just signing new certificates on renewal (default: no)
-#PRIVATE_KEY_RENEW="no"
 
 # Which public key algorithm should be used? Supported: rsa, prime256v1 and secp384r1
 #KEY_ALGO=rsa
