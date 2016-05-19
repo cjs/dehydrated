@@ -1,28 +1,36 @@
 #!/usr/bin/env ruby
 
 require 'resolv'
-require 'pry'
-require 'awesome_print'
-require 'public_suffix'
 
 def setup_dns(domain, txt_challenge)
-  dns_name = PublicSuffix.parse("#{domain}").domain
-  put "prepping change for #{domain}. Create TXT record for:"
-  put "\"#{txt_challenge}\""
-  get "Press any key when DNS has been updated..."
   dns = Resolv::DNS.new;
-  resp2 = dns.getresource(domain, Resolv::DNS::Resource::IN::TXT)
-  ap resp2
-  until resp2.valid
-    sleep 30
-    resp2 = dns.getresource(domain, Resolv::DNS::Resource::IN::TXT)
-    ap resp2
+  acme_domain = "_acme-challenge."+domain; 
+  puts "Create TXT record for the domain: #{acme_domain}. TXT record:"
+  puts txt_challenge
+  puts "Press enter when DNS has been updated..."
+  $stdin.readline()
+  resolved = false;
+
+  until resolved
+    dns.each_resource(acme_domain, Resolv::DNS::Resource::IN::TXT) { |resp|
+     if resp.strings[0] == txt_challenge
+       puts "Found #{resp.strings[0]}. match."
+       resolved = true;
+     else
+       puts "Found #{resp.strings[0]}. no match."
+     end
+    }
+    if !resolved
+     puts "Didn't find a match for #{txt_challenge}"; 
+     puts "Waiting to retry..."; 
+     sleep 30; 
+    end
   end
 end
 
 def delete_dns(domain, txt_challenge)
-  put "Challenge complete. Please delete this TXT record."
-  get "Press any key when DNS has been updated..."
+  puts "Challenge complete. Please delete this TXT record now (or in bulk later). Press enter to continue..."
+  $stdin.readline()
 end
 
 if __FILE__ == $0
@@ -30,9 +38,9 @@ if __FILE__ == $0
   domain = ARGV[1]
   txt_challenge = ARGV[3]
 
-  puts hook_stage
-  puts domain
-  puts txt_challenge
+  # puts hook_stage
+  # puts domain
+  # puts txt_challenge
 
   if hook_stage == "deploy_challenge"
     setup_dns(domain, txt_challenge)
