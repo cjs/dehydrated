@@ -160,12 +160,15 @@ _CHECK_LOG "Checking domain name(s) of existing cert... unchanged."
 _CHECK_LOG "Skipping renew"
 _CHECK_ERRORLOG
 
+# Disable private key renew
+echo 'PRIVATE_KEY_RENEW="no"' >> config.sh
+
 # Run in cron mode one last time, with domain in domains.txt and force-resign (should find certificate, resign anyway, and not generate private key)
 _TEST "Run in cron mode one last time, with domain in domains.txt and force-resign"
 ./letsencrypt.sh --cron --force > tmplog 2> errorlog || _FAIL "Script execution failed"
 _CHECK_LOG "Checking domain name(s) of existing cert... unchanged."
 _CHECK_LOG "Ignoring because renew was forced!"
-_CHECK_LOG "Generating private key"
+_CHECK_NOT_LOG "Generating private key"
 _CHECK_LOG "Requesting challenge for ${TMP_URL}"
 _CHECK_LOG "Requesting challenge for ${TMP2_URL}"
 _CHECK_LOG "Requesting challenge for ${TMP3_URL}"
